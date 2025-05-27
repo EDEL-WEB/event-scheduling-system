@@ -1,0 +1,52 @@
+from prettytable import PrettyTable
+from lib.db.models import User, Booking, Event
+from datetime import datetime
+
+def list_users(session):
+    users = session.query(User).all()
+    table = PrettyTable()
+    table.field_names = ["ID", "Username", "Email"]
+
+    for user in users:
+        table.add_row([user.id, user.username, user.email])
+
+    print(table)
+
+def list_events(session):
+    events = session.query(Event).all()
+    table = PrettyTable(["ID", "Title", "Date", "Organizer ID"])
+
+    for event in events:
+        table.add_row([event.id, event.title, event.event_date.strftime("%Y-%m-%d"), event.organizer_id])
+
+    print(table)
+
+def list_upcoming_events(session):
+    today = datetime.now().date()
+    events = session.query(Event).filter(Event.event_date >= today).order_by(Event.event_date).all()
+
+    table = PrettyTable(["ID", "Title", "Date", "Organizer ID"])
+    for event in events:
+        table.add_row([event.id, event.title, event.event_date.strftime("%Y-%m-%d"), event.organizer_id])
+
+    print(table)
+
+def list_bookings(session):
+    bookings = session.query(Booking).all()
+    table = PrettyTable(["Booking ID", "User ID", "Event ID", "Booking Time"])
+
+    for booking in bookings:
+        booking_time = booking.booking_time.strftime("%Y-%m-%d %H:%M:%S")
+        table.add_row([booking.id, booking.user_id, booking.event_id, booking_time])
+
+    print(table)
+
+def list_bookings_for_user(session, user_id):
+    bookings = session.query(Booking).filter(Booking.user_id == user_id).all()
+    table = PrettyTable(["Booking ID", "User ID", "Event ID", "Booking Time"])
+
+    for booking in bookings:
+        booking_time = booking.booking_time.strftime("%Y-%m-%d %H:%M:%S")
+        table.add_row([booking.id, booking.user_id, booking.event_id, booking_time])
+
+    print(table)
