@@ -5,12 +5,12 @@ import random
 faker = Faker()
 session = SessionLocal()
 
-# Clear old data
+
 session.query(Booking).delete()
 session.query(Event).delete()
 session.query(User).delete()
 
-# Create users
+
 users = [User(username=faker.name(), email=faker.email()) for _ in range(5)]
 session.add_all(users)
 session.commit()
