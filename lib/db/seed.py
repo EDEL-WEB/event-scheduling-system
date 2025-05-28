@@ -1,6 +1,6 @@
 from faker import Faker
 from lib.db.session import SessionLocal
-from lib.db.models import User, Event, Booking  # ✅ Correct import path
+from lib.db.models import User, Event, Booking  
 import random
 faker = Faker()
 session = SessionLocal()
