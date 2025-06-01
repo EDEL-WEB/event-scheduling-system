@@ -1,6 +1,21 @@
 from prettytable import PrettyTable
 from lib.db.models import User, Booking, Event
 from datetime import datetime
+import random
+
+PLACEHOLDERS = [
+    "Community Events Team",
+    "Pending Assignment",
+    "Awaiting Organizer",
+    "Central Office",
+    "Events Department",
+    "To Be Confirmed",
+    "Local Committee",
+    "Management Team",
+    "Program Coordinator",
+    "Temporary Host"
+]
+placeholders = PLACEHOLDERS 
 
 def list_users(session):
     users = session.query(User).all()
@@ -14,20 +29,26 @@ def list_users(session):
 
 def list_events(session):
     events = session.query(Event).all()
-    table = PrettyTable(["ID", "Title", "Date", "Organizer ID"])
+    table = PrettyTable(["ID", "Title", "Date", "Organizer"])
 
     for event in events:
-        table.add_row([event.id, event.title, event.event_date.strftime("%Y-%m-%d"), event.organizer_id])
+        organizer = event.organizer_id
+        if organizer is None:
+            organizer = random.choice(placeholders)
+        table.add_row([event.id, event.title, event.event_date.strftime("%Y-%m-%d"), organizer])
 
     print(table)
 
 def list_upcoming_events(session):
     today = datetime.now().date()
     events = session.query(Event).filter(Event.event_date >= today).order_by(Event.event_date).all()
+    table = PrettyTable(["ID", "Title", "Date", "Organizer"])
 
-    table = PrettyTable(["ID", "Title", "Date", "Organizer ID"])
     for event in events:
-        table.add_row([event.id, event.title, event.event_date.strftime("%Y-%m-%d"), event.organizer_id])
+        organizer = event.organizer_id
+        if organizer is None:
+            organizer = random.choice(placeholders)
+        table.add_row([event.id, event.title, event.event_date.strftime("%Y-%m-%d"), organizer])
 
     print(table)
 

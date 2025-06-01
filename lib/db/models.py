@@ -19,6 +19,7 @@ class Event(Base):
 
     id = Column(Integer, primary_key=True)
     title = Column(String(100), nullable=False)
+    organizer_id = Column(Integer, ForeignKey("users.id"), nullable=False)
     description = Column(Text)
     event_date = Column(DateTime, nullable=False)
     location = Column(String(100))
