@@ -12,7 +12,9 @@ def print_menu():
     print("7. Delete a booking")
     print("8. Update event title")
     print("9. Update event description")
-    print("10. Exit")
+    print("10. View event attendees")
+    print("11. Search events by date range")
+    print("12. Exit")
 
 def main():
     session = SessionLocal()
@@ -72,6 +74,21 @@ def main():
                     print("Invalid input.")
 
             elif choice == "10":
+                event_id = input("Enter event ID to view attendees: ").strip()
+                if event_id.isdigit():
+                    commands.view_event_attendees(session, int(event_id))
+                else:
+                    print("Invalid event ID.")
+
+            elif choice == "11":
+                start_date = input("Enter start date (YYYY-MM-DD): ").strip()
+                end_date = input("Enter end date (YYYY-MM-DD): ").strip()
+                if start_date and end_date:
+                    queries.search_events_by_date_range(session, start_date, end_date)
+                else:
+                    print("Both start and end dates are required.")
+
+            elif choice == "12":
                 print("Goodbye!")
                 break
 
