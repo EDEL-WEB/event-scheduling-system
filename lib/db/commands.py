@@ -1,52 +1,41 @@
-from lib.db.models import Booking, Event
-from datetime import datetime
-from sqlalchemy.exc import SQLAlchemyError
-from prettytable import PrettyTable
+from .models import Booking, Event, User
 
 def add_booking(session, user_id, event_id):
-    try:
-        event = session.query(Event).filter_by(id=event_id).first()
-        if not event:
-            print(f" Event with ID {event_id} does not exist.")
-            return
-
-        booking = Booking(user_id=user_id, event_id=event_id, booking_time=datetime.now())
+    user = session.query(User).filter_by(id=user_id).first()
+    event = session.query(Event).filter_by(id=event_id).first()
+    if user and event:
+        booking = Booking(user_id=user_id, event_id=event_id)
         session.add(booking)
         session.commit()
-
-        table = PrettyTable(["Booking ID", "User ID", "Event ID", "Booking Time"])
-        table.add_row([booking.id, booking.user_id, booking.event_id, booking.booking_time.strftime("%Y-%m-%d %H:%M:%S")])
-        print(" Booking created successfully:")
-        print(table)
-    except SQLAlchemyError as e:
-        session.rollback()
-        print(f" Failed to add booking: {e}")
+        print(f"Booking added for user {user_id} to event {event_id}")
+    else:
+        print("User or event not found.")
 
 def delete_booking(session, booking_id):
-    try:
-        booking = session.query(Booking).filter_by(id=booking_id).first()
-        if not booking:
-            print(" Booking not found")
-            return
-
+    booking = session.query(Booking).filter_by(id=booking_id).first()
+    if booking:
         session.delete(booking)
         session.commit()
-        print(f" Booking ID {booking_id} deleted successfully")
-    except SQLAlchemyError as e:
-        session.rollback()
-        print(f" Failed to delete booking: {e}")
+        print(f"Booking ID {booking_id} deleted.")
+    else:
+        print("Booking not found.")
 
 def update_event_title(session, event_id, new_title):
-    try:
-        event = session.query(Event).filter_by(id=event_id).first()
-        if not event:
-            print(" Event not found")
-            return
-
+    event = session.query(Event).filter_by(id=event_id).first()
+    if event:
         old_title = event.title
         event.title = new_title
         session.commit()
-        print(f" Event ID {event_id} title updated from '{old_title}' to '{new_title}'")
-    except SQLAlchemyError as e:
-        session.rollback()
-        print(f" Failed to update event: {e}")
+        print(f"Event ID {event_id} title updated from '{old_title}' to '{new_title}'")
+    else:
+        print(f"No event found with ID {event_id}")
+
+def update_event_description(session, event_id, new_description):
+    event = session.query(Event).filter_by(id=event_id).first()
+    if event:
+        old_description = event.description
+        event.description = new_description
+        session.commit()
+        print(f"Event ID {event_id} description updated from '{old_description}' to '{new_description}'")
+    else:
+        print(f"No event found with ID {event_id}")
